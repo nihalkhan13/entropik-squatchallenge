@@ -18,9 +18,8 @@ export default function AdminPage() {
     useEffect(() => {
         if (!isLoading) {
             if (!user || !user.is_admin) {
-                // router.replace("/dashboard")  <-- Uncomment to enforce strict security
-                // For MVP demo, allowing access or showing "Unauthorized"
-                if (!user?.is_admin) console.warn("Accessing admin without admin flag")
+                router.replace("/dashboard")
+                return
             }
             fetchData()
         }
