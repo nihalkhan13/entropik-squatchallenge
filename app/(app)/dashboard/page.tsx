@@ -15,7 +15,7 @@ export default function DashboardPage() {
             {/* Intro / Welcome */}
             <div className="space-y-1">
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-brand-gray bg-clip-text text-transparent">
-                    Day {Math.ceil((new Date().getTime() - new Date('2026-01-31').getTime()) / (1000 * 3600 * 24)) + 1}
+                    Day {Math.floor((new Date().getTime() - new Date('2026-01-31').getTime()) / (1000 * 3600 * 24)) + 1}
                 </h1>
                 <p className="text-brand-gray text-sm font-medium">
                     30 Days of Discipline. Stay Hard.
