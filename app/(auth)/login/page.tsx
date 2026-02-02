@@ -36,10 +36,8 @@ export default function LoginPage() {
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 className="w-full max-w-md z-10"
             >
-                <div className="text-center mb-10">
-                    <h1 className="text-4xl font-bold tracking-tighter text-white mb-2 text-glow">
-                        ENTROPIK
-                    </h1>
+                <div className="text-center mb-10 flex flex-col items-center">
+                    <img src="/logo.png" alt="ENTROPIK" className="h-32 w-auto mb-4" />
                     <p className="text-brand-gray text-lg tracking-wide uppercase text-xs font-semibold">
                         100 Squats / 30 Days
                     </p>
