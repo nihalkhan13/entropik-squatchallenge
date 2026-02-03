@@ -17,8 +17,16 @@ export function CalendarGrid() {
     const [loading, setLoading] = useState(true)
     const [startDateStr, setStartDateStr] = useState("2026-01-31")
 
-    // Current date for "Missed" logic
-    const today = new Date().toISOString().split("T")[0]
+    // Current date for "Missed" logic (PST timezone)
+    const getTodayPST = () => {
+        const now = new Date();
+        const pstDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+        const year = pstDate.getFullYear();
+        const month = String(pstDate.getMonth() + 1).padStart(2, '0');
+        const day = String(pstDate.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    const today = getTodayPST();
 
     useEffect(() => {
         fetchData()

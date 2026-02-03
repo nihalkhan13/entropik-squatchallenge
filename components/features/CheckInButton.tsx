@@ -14,9 +14,17 @@ export function CheckInButton() {
     const [loading, setLoading] = useState(true)
     const [showConfetti, setShowConfetti] = useState(false)
 
-    // Get today's date in YYYY-MM-DD local time (simplified)
-    // Ideally use a consistent timezone, but client-local is fine for this MVP
-    const today = new Date().toISOString().split("T")[0]
+    // Get today's date in PST timezone (YYYY-MM-DD)
+    const getTodayPST = () => {
+        const now = new Date();
+        // Convert to PST (UTC-8)
+        const pstDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+        const year = pstDate.getFullYear();
+        const month = String(pstDate.getMonth() + 1).padStart(2, '0');
+        const day = String(pstDate.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+    const today = getTodayPST();
 
     useEffect(() => {
         checkStatus()
