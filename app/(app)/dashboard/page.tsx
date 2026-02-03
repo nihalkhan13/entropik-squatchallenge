@@ -5,6 +5,7 @@ import { CheckInButton } from "@/components/features/CheckInButton"
 import { CalendarGrid } from "@/components/features/CalendarGrid"
 import { GroupProgress } from "@/components/features/GroupProgress"
 import { Leaderboard } from "@/components/features/Leaderboard"
+import { ActivityFeed } from "@/components/features/ActivityFeed"
 import { motion } from "framer-motion"
 
 export default function DashboardPage() {
@@ -32,9 +33,12 @@ export default function DashboardPage() {
             <GroupProgress />
 
             {/* Main Action */}
-            <div className="py-4">
+            <div>
                 <CheckInButton />
             </div>
+
+            {/* Activity Feed */}
+            <ActivityFeed />
 
             {/* Calendar */}
             <section className="bg-brand-glass rounded-2xl p-4 border border-brand-glass-border">
