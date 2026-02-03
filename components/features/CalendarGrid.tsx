@@ -118,11 +118,17 @@ export function CalendarGrid() {
                     <div className="text-xs text-brand-gray font-bold uppercase tracking-wider sticky left-0 bg-brand-dark z-10 p-1">
                         ATHLETE
                     </div>
-                    {challengeDays.map((date, i) => (
-                        <div key={date} className="text-[10px] text-brand-gray text-center">
-                            {i + 1}
-                        </div>
-                    ))}
+                    {challengeDays.map((date, i) => {
+                        const d = new Date(date + 'T12:00:00'); // Noon to avoid timezone issues
+                        const month = d.toLocaleDateString('en-US', { month: 'short' });
+                        const day = d.getDate();
+                        return (
+                            <div key={date} className="text-[9px] text-brand-gray text-center leading-tight">
+                                <div>{month}</div>
+                                <div>{day}</div>
+                            </div>
+                        );
+                    })}
                 </div>
 
                 <div className="space-y-1">
