@@ -15,7 +15,13 @@ export default function DashboardPage() {
             {/* Intro / Welcome */}
             <div className="space-y-1">
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-brand-gray bg-clip-text text-transparent">
-                    Day {Math.floor((new Date().getTime() - new Date('2026-01-31').getTime()) / (1000 * 3600 * 24)) + 1}
+                    Day {(() => {
+                        const start = new Date('2026-01-31T00:00:00-08:00'); // PST midnight
+                        const now = new Date();
+                        const diffMs = now.getTime() - start.getTime();
+                        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                        return diffDays + 1;
+                    })()}
                 </h1>
                 <p className="text-brand-gray text-sm font-medium">
                     30 Days of Discipline. Stay Hard.
