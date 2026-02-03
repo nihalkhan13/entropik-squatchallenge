@@ -28,7 +28,7 @@ export function CheckInButton() {
 
     useEffect(() => {
         checkStatus()
-    }, [user])
+    }, [user, today])
 
     const checkStatus = async () => {
         if (!user) return
