@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "Entropik | 100 Squats",
   description: "30 Days of Discipline.",
   manifest: "/manifest.json",
+  icons: {
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export const viewport: Viewport = {
