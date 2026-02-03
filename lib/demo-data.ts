@@ -1,6 +1,6 @@
 
 export const DEMO_SETTINGS = [
-    { key: 'start_date', value: '2026-01-31' }
+    { key: 'start_date', value: '2026-01-30' }
 ];
 
 export const DEMO_USERS = [

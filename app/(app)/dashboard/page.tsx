@@ -16,7 +16,7 @@ export default function DashboardPage() {
             <div className="space-y-1">
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-brand-gray bg-clip-text text-transparent">
                     Day {(() => {
-                        const start = new Date('2026-01-31T00:00:00-08:00'); // PST midnight
+                        const start = new Date('2026-01-30T00:00:00-08:00'); // PST midnight
                         const now = new Date();
                         const diffMs = now.getTime() - start.getTime();
                         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
