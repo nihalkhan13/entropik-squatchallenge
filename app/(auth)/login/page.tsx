@@ -75,6 +75,12 @@ export default function LoginPage() {
                         >
                             {isLoading ? "AUTHENTICATING..." : "ENTER CHALLENGE"}
                         </Button>
+
+                        <div className="pt-2 text-center">
+                            <p className="text-xs text-brand-gray/60 leading-relaxed italic">
+                                For the best experience, tap <span className="text-brand-teal font-semibold">Share</span> then <span className="text-brand-teal font-semibold">"Add to Home Screen"</span>
+                            </p>
+                        </div>
                     </form>
                 </Card>
 
