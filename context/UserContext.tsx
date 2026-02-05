@@ -11,12 +11,18 @@ export type User = {
     username: string
     created_at: string
     is_admin: boolean
+    notification_settings?: {
+        reminders?: boolean
+        social?: boolean
+        push_token?: string
+    }
 }
 
 interface UserContextType {
     user: User | null
     isLoading: boolean
     login: (username: string) => Promise<void>
+    updateUser: (updates: Partial<User>) => Promise<void>
     logout: () => void
 }
 
@@ -149,6 +155,33 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         router.push("/dashboard")
     }
 
+    const updateUser = async (updates: Partial<User>) => {
+        if (!user) return
+
+        if (isMock) {
+            const newUser = { ...user, ...updates }
+            storage.saveUser(newUser as any)
+            setUser(newUser)
+            return
+        }
+
+        const { data, error } = await supabase
+            .from("users")
+            .update(updates)
+            .eq("id", user.id)
+            .select()
+            .single()
+
+        if (error) {
+            console.error("Update user error", error)
+            throw error
+        }
+
+        if (data) {
+            setUser(data)
+        }
+    }
+
     const logout = () => {
         setUser(null)
         localStorage.removeItem("entropik_user")
@@ -156,7 +189,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <UserContext.Provider value={{ user, isLoading, login, logout }}>
+        <UserContext.Provider value={{ user, isLoading, login, updateUser, logout }}>
             {children}
         </UserContext.Provider>
     )

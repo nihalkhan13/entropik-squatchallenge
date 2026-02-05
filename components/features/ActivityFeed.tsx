@@ -12,6 +12,7 @@ export function ActivityFeed() {
     const { user } = useUser()
     const [activities, setActivities] = useState<Activity[]>([])
     const [loading, setLoading] = useState(true)
+    const [isExpanded, setIsExpanded] = useState(false)
 
     useEffect(() => {
         fetchActivities()
@@ -72,6 +73,9 @@ export function ActivityFeed() {
         )
     }
 
+    const visibleActivities = isExpanded ? activities : activities.slice(0, 3)
+    const hasMore = activities.length > 3
+
     return (
         <section className="space-y-4">
             <div className="flex items-center gap-2 mb-2 px-1">
@@ -83,8 +87,8 @@ export function ActivityFeed() {
 
             <div className="space-y-3">
                 <AnimatePresence initial={false}>
-                    {activities.length > 0 ? (
-                        activities.map((activity) => (
+                    {visibleActivities.length > 0 ? (
+                        visibleActivities.map((activity) => (
                             <ActivityItem key={activity.id} activity={activity} />
                         ))
                     ) : (
@@ -98,6 +102,21 @@ export function ActivityFeed() {
                     )}
                 </AnimatePresence>
             </div>
+
+            {hasMore && (
+                <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="w-full py-3 text-[10px] font-black text-brand-teal/40 hover:text-brand-teal uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 group bg-brand-glass/30 rounded-xl border border-brand-glass-border/20 hover:border-brand-teal/30"
+                >
+                    <span className="w-8 h-[1px] bg-brand-teal/10 group-hover:bg-brand-teal/30 transition-all" />
+                    {isExpanded ? (
+                        <>SHOW LESS</>
+                    ) : (
+                        <>VIEW {activities.length - 3} MORE UPDATES</>
+                    )}
+                    <span className="w-8 h-[1px] bg-brand-teal/10 group-hover:bg-brand-teal/30 transition-all" />
+                </button>
+            )}
         </section>
     )
 }

@@ -7,6 +7,7 @@ import { useUser } from "@/context/UserContext"
 import { Check, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { storage } from "@/lib/storage"
+import { getTodayPST } from "@/lib/date"
 
 export function CheckInButton() {
     const { user } = useUser()
@@ -14,16 +15,6 @@ export function CheckInButton() {
     const [loading, setLoading] = useState(true)
     const [showConfetti, setShowConfetti] = useState(false)
 
-    // Get today's date in PST timezone (YYYY-MM-DD)
-    const getTodayPST = () => {
-        const now = new Date();
-        // Convert to PST (UTC-8)
-        const pstDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-        const year = pstDate.getFullYear();
-        const month = String(pstDate.getMonth() + 1).padStart(2, '0');
-        const day = String(pstDate.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
     const today = getTodayPST();
 
     useEffect(() => {
@@ -81,6 +72,13 @@ export function CheckInButton() {
             console.error("Checkin failed", error)
             setHasCheckedIn(false) // revert
             alert("Check-in failed. Please try again.")
+        } else {
+            // Trigger social pulse notification
+            fetch('/api/notify', {
+                method: 'POST',
+                body: JSON.stringify({ type: 'social-pulse' }),
+                headers: { 'Content-Type': 'application/json' }
+            }).catch(err => console.error("Notification trigger failed", err))
         }
 
         setLoading(false)

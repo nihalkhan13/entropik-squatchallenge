@@ -6,6 +6,7 @@ import { useUser } from "@/context/UserContext"
 import { cn } from "@/lib/utils"
 import { ReactionsList } from "./ReactionsList"
 import { ReactionPicker } from "./ReactionPicker"
+import { getDayNumber } from "@/lib/date"
 
 interface ActivityItemProps {
     activity: Activity
@@ -18,7 +19,11 @@ export function ActivityItem({ activity }: { activity: Activity }) {
     const getActionText = () => {
         switch (activity.event_type) {
             case 'completed':
-                return `completed Day ${activity.metadata.day || '?'}`
+                // Use metadata.day, or calculate from metadata.date, or fallback to created_at
+                const dateSource = activity.metadata?.date || activity.created_at
+                const calculatedDay = getDayNumber(dateSource)
+                const day = activity.metadata?.day || (isNaN(calculatedDay) ? '?' : calculatedDay)
+                return `completed Day ${day}`
             case 'streak_milestone':
                 return `hit a ${activity.metadata.streak_count} day streak!`
             case 'finished':

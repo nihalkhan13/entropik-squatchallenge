@@ -6,28 +6,84 @@ import { CalendarGrid } from "@/components/features/CalendarGrid"
 import { GroupProgress } from "@/components/features/GroupProgress"
 import { Leaderboard } from "@/components/features/Leaderboard"
 import { ActivityFeed } from "@/components/features/ActivityFeed"
-import { motion } from "framer-motion"
+import { PerformanceReport } from "@/components/reports/PerformanceReport"
+import { calculatePerformanceStats } from "@/lib/stats"
+import { motion, AnimatePresence } from "framer-motion"
+import { Settings, BarChart3, ChevronDown, ChevronUp } from "lucide-react"
+import { useEffect, useState } from "react"
+import { supabase } from "@/lib/supabase"
+import Link from "next/link"
+import { getCurrentDay, CHALLENGE_START_DATE } from "@/lib/date"
 
 export default function DashboardPage() {
     const { user } = useUser()
+    const [stats, setStats] = useState<any>(null)
+    const [showReport, setShowReport] = useState(false)
+
+    const currentDay = getCurrentDay()
+
+    useEffect(() => {
+        if (user) {
+            fetchStats()
+        }
+    }, [user])
+
+    const fetchStats = async () => {
+        if (!user) return
+        const { data: checkins } = await supabase
+            .from('checkins')
+            .select('date')
+            .eq('user_id', user.id)
+
+        if (checkins) {
+            const calculated = calculatePerformanceStats(
+                user.username,
+                checkins,
+                CHALLENGE_START_DATE,
+                currentDay
+            )
+            setStats(calculated)
+        }
+    }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 relative">
             {/* Intro / Welcome */}
-            <div className="space-y-1">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-brand-gray bg-clip-text text-transparent">
-                    Day {(() => {
-                        const start = new Date('2026-01-31T00:00:00-08:00'); // PST midnight
-                        const now = new Date();
-                        const diffMs = now.getTime() - start.getTime();
-                        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-                        return diffDays + 1;
-                    })()}
-                </h1>
-                <p className="text-brand-gray text-sm font-medium">
-                    30 Days of Discipline. Stay Hard.
-                </p>
+            <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-brand-gray bg-clip-text text-transparent">
+                        Day {currentDay}
+                    </h1>
+                    <p className="text-brand-gray text-sm font-medium">
+                        30 Days of Discipline. Stay Hard.
+                    </p>
+                </div>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => setShowReport(!showReport)}
+                        className="p-2 bg-brand-glass rounded-xl border border-brand-glass-border/30 text-brand-gray/60 hover:text-brand-teal transition-colors"
+                    >
+                        <BarChart3 className="w-5 h-5" />
+                    </button>
+                    <Link href="/settings" className="p-2 bg-brand-glass rounded-xl border border-brand-glass-border/30 text-brand-gray/60 hover:text-brand-teal transition-colors">
+                        <Settings className="w-5 h-5" />
+                    </Link>
+                </div>
             </div>
+
+            {/* Performance Report Overlay/Section */}
+            <AnimatePresence>
+                {showReport && stats && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden"
+                    >
+                        <PerformanceReport stats={stats} />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Group Stats */}
             <GroupProgress />

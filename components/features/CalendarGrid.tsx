@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { User, useUser } from "@/context/UserContext"
 import { storage } from "@/lib/storage"
+import { CHALLENGE_START_DATE, getTodayPST } from "@/lib/date"
 
 type Checkin = {
     user_id: string
@@ -15,18 +16,9 @@ export function CalendarGrid() {
     const [users, setUsers] = useState<User[]>([])
     const [checkins, setCheckins] = useState<Checkin[]>([])
     const [loading, setLoading] = useState(true)
-    const [startDateStr, setStartDateStr] = useState("2026-01-31")
+    const [startDateStr, setStartDateStr] = useState(CHALLENGE_START_DATE.split('T')[0])
 
-    // Current date for "Missed" logic (PST timezone)
-    const getTodayPST = () => {
-        const now = new Date();
-        const pstDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-        const year = pstDate.getFullYear();
-        const month = String(pstDate.getMonth() + 1).padStart(2, '0');
-        const day = String(pstDate.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    };
-    const today = getTodayPST();
+    const today = getTodayPST()
 
     useEffect(() => {
         fetchData()
