@@ -13,7 +13,7 @@ interface ReportStats {
     missedDays: number
     longestStreak: number
     rank: number
-    userName: string
+    username: string
 }
 
 export function PerformanceReport({ stats }: { stats: ReportStats }) {
@@ -43,7 +43,7 @@ export function PerformanceReport({ stats }: { stats: ReportStats }) {
             if (type === 'download') {
                 const link = document.createElement('a')
                 link.href = image
-                link.download = `entropik-report-${stats.userName}.png`
+                link.download = `entropik-report-${stats.username}.png`
                 link.click()
             } else if (navigator.share) {
                 const blob = await (await fetch(image)).blob()

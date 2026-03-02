@@ -17,10 +17,6 @@ export function CheckInButton({ challengeType = 'squat' }: { challengeType?: 'sq
 
     const today = getTodayPST();
 
-    useEffect(() => {
-        checkStatus()
-    }, [user, today])
-
     const checkStatus = async () => {
         if (!user) return
 
@@ -45,6 +41,10 @@ export function CheckInButton({ challengeType = 'squat' }: { challengeType?: 'sq
         }
         setLoading(false)
     }
+
+    useEffect(() => {
+        checkStatus()
+    }, [user, today])
 
     const handleCheckIn = async () => {
         if (!user || hasCheckedIn || loading) return
@@ -181,20 +181,28 @@ export function CheckInButton({ challengeType = 'squat' }: { challengeType?: 'sq
 }
 
 function ConfettiBurst() {
-    // Simple particle burst
-    const particles = Array.from({ length: 20 })
+    // Generate particles once on mount to maintain function purity
+    const [particles] = useState(() =>
+        Array.from({ length: 20 }).map(() => ({
+            scale: Math.random() * 1 + 0.5,
+            x: (Math.random() - 0.5) * 300,
+            y: (Math.random() - 0.5) * 300,
+            rotate: Math.random() * 360
+        }))
+    )
+
     return (
         <div className="absolute inset-0 pointer-events-none flex justify-center items-center overflow-visible z-10">
-            {particles.map((_, i) => (
+            {particles.map((p, i) => (
                 <motion.div
                     key={i}
                     initial={{ opacity: 1, scale: 0, x: 0, y: 0 }}
                     animate={{
                         opacity: 0,
-                        scale: Math.random() * 1 + 0.5,
-                        x: (Math.random() - 0.5) * 300,
-                        y: (Math.random() - 0.5) * 300,
-                        rotate: Math.random() * 360
+                        scale: p.scale,
+                        x: p.x,
+                        y: p.y,
+                        rotate: p.rotate
                     }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                     className="absolute w-2 h-2 bg-brand-teal rounded-sm shadow-[0_0_10px_#5dffdd]"

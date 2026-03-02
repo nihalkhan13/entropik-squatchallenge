@@ -43,10 +43,10 @@ export function CalendarGrid({ challengeType = 'squat' }: { challengeType?: 'squ
             if (isMock) {
                 setUsers(storage.getUsers())
                 const storedCheckins = storage.getCheckins()
-                setCheckins(storedCheckins.map((c: any) => ({ user_id: c.user_id, date: c.date })))
+                setCheckins(storedCheckins.map((c: { user_id: string, date: string }) => ({ user_id: c.user_id, date: c.date })))
 
                 const settings = storage.getSettings()
-                const startSetting = settings.find((s: any) => s.key === 'start_date')
+                const startSetting = settings.find((s: { key: string, value: string }) => s.key === 'start_date')
                 if (startSetting) setStartDateStr(startSetting.value)
 
                 setLoading(false)

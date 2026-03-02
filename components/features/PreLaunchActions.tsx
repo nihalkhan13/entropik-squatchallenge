@@ -5,7 +5,14 @@ import { Card } from "@/components/ui/Card"
 
 declare global {
     interface Window {
-        OneSignal: any;
+        OneSignal?: {
+            push: Function
+            showNativePrompt: Function
+            isPushNotificationsEnabled: Function
+            init: Function
+            getUserId: Function
+        } & unknown[]
+        html2canvas?: Function
     }
 }
 
@@ -24,8 +31,8 @@ export function PreLaunchActions() {
 
         // Check if OneSignal notifications are already granted
         if (window.OneSignal) {
-            window.OneSignal.push(async function () {
-                const isEnabled = await window.OneSignal.isPushNotificationsEnabled()
+            window.OneSignal!.push(async function () {
+                const isEnabled = await window.OneSignal!.isPushNotificationsEnabled()
                 setNotificationsEnabled(isEnabled)
             })
         }
@@ -33,9 +40,9 @@ export function PreLaunchActions() {
 
     const handleEnableNotifications = async () => {
         if (window.OneSignal) {
-            window.OneSignal.push(async function () {
-                await window.OneSignal.showNativePrompt()
-                const isEnabled = await window.OneSignal.isPushNotificationsEnabled()
+            window.OneSignal!.push(async function () {
+                await window.OneSignal!.showNativePrompt()
+                const isEnabled = await window.OneSignal!.isPushNotificationsEnabled()
                 setNotificationsEnabled(isEnabled)
             })
         } else {

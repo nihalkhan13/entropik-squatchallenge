@@ -6,7 +6,14 @@ import { supabase } from '@/lib/supabase'
 
 declare global {
     interface Window {
-        OneSignal: any;
+        OneSignal?: {
+            push: Function
+            showNativePrompt: Function
+            isPushNotificationsEnabled: Function
+            init: Function
+            getUserId: Function
+        } & unknown[]
+        html2canvas?: Function
     }
 }
 
@@ -20,10 +27,10 @@ export function OneSignalProvider({ children }: { children: ReactNode }) {
         script.async = true
         document.head.appendChild(script)
 
-        window.OneSignal = window.OneSignal || []
+        window.OneSignal = window.OneSignal || ([] as unknown as NonNullable<Window['OneSignal']>)
 
-        window.OneSignal.push(function () {
-            window.OneSignal.init({
+        window.OneSignal!.push(function () {
+            window.OneSignal!.init({
                 appId: "af9ce9fc-ad08-4b55-9952-e91f6985b62f",
                 safari_web_id: "web.onesignal.auto.10abd404-1836-418c-8432-687295af3c87",
                 notifyButton: {
@@ -40,8 +47,8 @@ export function OneSignalProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         if (user && window.OneSignal) {
-            window.OneSignal.push(async function () {
-                const userId = await window.OneSignal.getUserId()
+            window.OneSignal!.push(async function () {
+                const userId = await window.OneSignal!.getUserId()
                 if (userId) {
                     await supabase
                         .from('users')

@@ -12,8 +12,14 @@ import { cn } from "@/lib/utils"
 
 declare global {
     interface Window {
-        OneSignal: any;
-        html2canvas: any;
+        OneSignal?: {
+            push: Function
+            showNativePrompt: Function
+            isPushNotificationsEnabled: Function
+            init: Function
+            getUserId: Function
+        } & unknown[]
+        html2canvas?: Function
     }
 }
 
@@ -24,8 +30,8 @@ export default function SettingsPage() {
 
     useEffect(() => {
         if (window.OneSignal) {
-            window.OneSignal.push(async function () {
-                const isPushEnabled = await window.OneSignal.isPushNotificationsEnabled()
+            window.OneSignal!.push(async function () {
+                const isPushEnabled = await window.OneSignal!.isPushNotificationsEnabled()
                 setPushEnabled(isPushEnabled)
             })
         }
@@ -41,8 +47,8 @@ export default function SettingsPage() {
                 // but we can update our app's internal state
                 setPushEnabled(false)
             } else {
-                await window.OneSignal.showNativePrompt()
-                const isEnabled = await window.OneSignal.isPushNotificationsEnabled()
+                await window.OneSignal!.showNativePrompt()
+                const isEnabled = await window.OneSignal!.isPushNotificationsEnabled()
                 setPushEnabled(isEnabled)
             }
         } catch (err) {

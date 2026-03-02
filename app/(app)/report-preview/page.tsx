@@ -12,7 +12,7 @@ export default function ReportPreviewPage() {
         longestStreak: 15,
         completionRate: 93,
         rank: 12,
-        userName: "VERIFICATION BOT"
+        username: "VERIFICATION BOT"
     }
 
     return (

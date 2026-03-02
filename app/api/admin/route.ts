@@ -52,7 +52,10 @@ export async function POST(req: Request) {
         }
 
         return NextResponse.json({ error: "Invalid action" }, { status: 400 })
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        if (e instanceof Error) {
+            return NextResponse.json({ error: e.message }, { status: 500 })
+        }
+        return NextResponse.json({ error: "An unknown error occurred" }, { status: 500 })
     }
 }

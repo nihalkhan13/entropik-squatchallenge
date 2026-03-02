@@ -9,10 +9,28 @@ import { ActivityItem } from "./ActivityItem"
 import { Flame } from "lucide-react"
 
 export function ActivityFeed({ challengeType = 'squat' }: { challengeType?: 'squat' | 'plank' }) {
-    const { user } = useUser()
     const [activities, setActivities] = useState<Activity[]>([])
     const [loading, setLoading] = useState(true)
     const [isExpanded, setIsExpanded] = useState(false)
+
+    const fetchActivities = async () => {
+        if (isMock) {
+            setLoading(false)
+            return
+        }
+
+        const { data, error } = await supabase
+            .from('activities')
+            .select('*, user:users(*)')
+            .eq('challenge_type', challengeType)
+            .order('created_at', { ascending: false })
+            .limit(20)
+
+        if (data) {
+            setActivities(data as Activity[])
+        }
+        setLoading(false)
+    }
 
     useEffect(() => {
         fetchActivities()
@@ -44,26 +62,7 @@ export function ActivityFeed({ challengeType = 'squat' }: { challengeType?: 'squ
         return () => {
             supabase.removeChannel(activitySub)
         }
-    }, [])
-
-    const fetchActivities = async () => {
-        if (isMock) {
-            setLoading(false)
-            return
-        }
-
-        const { data, error } = await supabase
-            .from('activities')
-            .select('*, user:users(*)')
-            .eq('challenge_type', challengeType)
-            .order('created_at', { ascending: false })
-            .limit(20)
-
-        if (data) {
-            setActivities(data as Activity[])
-        }
-        setLoading(false)
-    }
+    }, [challengeType])
 
     if (loading) {
         return (

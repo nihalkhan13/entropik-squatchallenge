@@ -11,7 +11,6 @@ import { DEMO_SETTINGS, DEMO_USERS } from "@/lib/demo-data"
 
 export default function AdminPage() {
     const { user, isLoading } = useUser()
-    const router = useRouter()
     const [users, setUsers] = useState<any[]>([])
     const [startDate, setStartDate] = useState("")
 
@@ -33,8 +32,8 @@ export default function AdminPage() {
 
             alert("Admin privileges granted! Please refresh the page.")
             window.location.reload()
-        } catch (e: any) {
-            alert(e.message)
+        } catch (e: unknown) {
+            if (e instanceof Error) alert(e.message)
         }
     }
 
@@ -91,8 +90,8 @@ export default function AdminPage() {
             })
             if (!res.ok) throw new Error("Failed to update date")
             alert("Date updated")
-        } catch (e: any) {
-            alert(e.message)
+        } catch (e: unknown) {
+            if (e instanceof Error) alert(e.message)
         }
     }
 
@@ -101,7 +100,7 @@ export default function AdminPage() {
         if (!checkins) return
 
         const header = "username,date,challenge_type,created_at\n"
-        const rows = checkins.map((c: any) => `${c.users?.username},${c.date},${c.challenge_type},${c.created_at}`).join("\n")
+        const rows = checkins.map((c: { users?: { username: string }, date: string, challenge_type: string, created_at: string }) => `${c.users?.username},${c.date},${c.challenge_type},${c.created_at}`).join("\n")
         const blob = new Blob([header + rows], { type: "text/csv" })
         const url = window.URL.createObjectURL(blob)
         const a = document.createElement("a")

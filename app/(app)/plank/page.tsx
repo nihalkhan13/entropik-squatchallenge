@@ -9,7 +9,7 @@ import { ActivityFeed } from "@/components/features/ActivityFeed"
 import { PerformanceReport } from "@/components/reports/PerformanceReport"
 import { calculatePerformanceStats } from "@/lib/stats"
 import { motion, AnimatePresence } from "framer-motion"
-import { Settings, BarChart3, ChevronDown, ChevronUp } from "lucide-react"
+import { Settings, BarChart3 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import Link from "next/link"
@@ -20,19 +20,12 @@ import { PreLaunchActions } from "@/components/features/PreLaunchActions"
 
 export default function DashboardPage() {
     const { user } = useUser()
-    const [stats, setStats] = useState<any>(null)
+    const [stats, setStats] = useState<ReturnType<typeof calculatePerformanceStats> | null>(null)
     const [showReport, setShowReport] = useState(false)
     const [challengeStartDate, setChallengeStartDate] = useState<string | null>(null)
     const [isPreLaunch, setIsPreLaunch] = useState<boolean>(false)
 
     const currentDay = getCurrentDay()
-
-    useEffect(() => {
-        if (user) {
-            fetchSettings()
-            fetchStats()
-        }
-    }, [user])
 
     const fetchSettings = async () => {
         const { data: settings } = await supabase.from("challenge_settings").select("*").eq("key", "start_date").maybeSingle()
@@ -60,6 +53,13 @@ export default function DashboardPage() {
             setStats(calculated)
         }
     }
+
+    useEffect(() => {
+        if (user) {
+            fetchSettings()
+            fetchStats()
+        }
+    }, [user])
 
     if (isPreLaunch && challengeStartDate) {
         return (

@@ -67,7 +67,7 @@ export const storage = {
     addCheckin: (userId: string, date: string) => {
         const checkins = storage.getCheckins()
         // Prevent dupes
-        if (checkins.some((c: any) => c.user_id === userId && c.date === date)) return
+        if (checkins.some((c: { user_id: string, date: string }) => c.user_id === userId && c.date === date)) return
 
         checkins.push({
             id: `local-${Date.now()}-${Math.random()}`,
@@ -79,7 +79,7 @@ export const storage = {
     },
 
     removeCheckin: (userId: string, date: string) => {
-        const checkins = storage.getCheckins().filter((c: any) => !(c.user_id === userId && c.date === date))
+        const checkins = storage.getCheckins().filter((c: { user_id: string, date: string }) => !(c.user_id === userId && c.date === date))
         localStorage.setItem(KEYS.CHECKINS, JSON.stringify(checkins))
     },
 
@@ -100,7 +100,7 @@ export const storage = {
 
     saveSetting: (key: string, value: string) => {
         const settings = storage.getSettings()
-        const idx = settings.findIndex((s: any) => s.key === key)
+        const idx = settings.findIndex((s: { key: string }) => s.key === key)
         if (idx >= 0) settings[idx].value = value
         else settings.push({ key, value })
         localStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings))

@@ -9,7 +9,7 @@ import { ActivityFeed } from "@/components/features/ActivityFeed"
 import { PerformanceReport } from "@/components/reports/PerformanceReport"
 import { calculatePerformanceStats } from "@/lib/stats"
 import { motion, AnimatePresence } from "framer-motion"
-import { Settings, BarChart3, ChevronDown, ChevronUp } from "lucide-react"
+import { Settings, BarChart3 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import Link from "next/link"
@@ -17,16 +17,10 @@ import { getCurrentDay, CHALLENGE_START_DATE } from "@/lib/date"
 
 export default function DashboardPage() {
     const { user } = useUser()
-    const [stats, setStats] = useState<any>(null)
+    const [stats, setStats] = useState<ReturnType<typeof calculatePerformanceStats> | null>(null)
     const [showReport, setShowReport] = useState(false)
 
     const currentDay = getCurrentDay()
-
-    useEffect(() => {
-        if (user) {
-            fetchStats()
-        }
-    }, [user])
 
     const fetchStats = async () => {
         if (!user) return
@@ -46,6 +40,12 @@ export default function DashboardPage() {
             setStats(calculated)
         }
     }
+
+    useEffect(() => {
+        if (user) {
+            fetchStats()
+        }
+    }, [user])
 
     return (
         <div className="space-y-8 relative">

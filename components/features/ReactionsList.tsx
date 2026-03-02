@@ -8,6 +8,16 @@ import { motion, AnimatePresence } from "framer-motion"
 export function ReactionsList({ activityId }: { activityId: string }) {
     const [reactions, setReactions] = useState<Reaction[]>([])
 
+    const fetchReactions = async () => {
+        if (isMock) return
+        const { data } = await supabase
+            .from('reactions')
+            .select('*')
+            .eq('activity_id', activityId)
+
+        if (data) setReactions(data as Reaction[])
+    }
+
     useEffect(() => {
         fetchReactions()
 
@@ -29,16 +39,6 @@ export function ReactionsList({ activityId }: { activityId: string }) {
             supabase.removeChannel(channel)
         }
     }, [activityId])
-
-    const fetchReactions = async () => {
-        if (isMock) return
-        const { data } = await supabase
-            .from('reactions')
-            .select('*')
-            .eq('activity_id', activityId)
-
-        if (data) setReactions(data as Reaction[])
-    }
 
     // Aggregate reactions: emoji -> count
     const counts = reactions.reduce((acc, r) => {
