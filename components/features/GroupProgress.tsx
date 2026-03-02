@@ -4,12 +4,13 @@ import { useEffect, useState } from "react"
 import { supabase, isMock } from "@/lib/supabase"
 import { motion } from "framer-motion"
 import { storage } from "@/lib/storage"
+import { getTodayPST } from "@/lib/date"
 
-export function GroupProgress() {
+export function GroupProgress({ challengeType = 'squat' }: { challengeType?: 'squat' | 'plank' }) {
     const [percentage, setPercentage] = useState(0)
     const [loading, setLoading] = useState(true)
 
-    const today = new Date().toISOString().split("T")[0]
+    const today = getTodayPST()
 
     useEffect(() => {
         async function fetchProgress() {
@@ -29,14 +30,20 @@ export function GroupProgress() {
                 return
             }
 
-            // Get total users
-            const { count: userCount } = await supabase.from("users").select("*", { count: 'exact', head: true })
+            // Get total users (we might want to only count users who have participated in this challenge type ideally, but for MVP counting all users or users with at least one check-in might be better. Left as total users for now, or maybe only users with allowed_legacy_squat for squat)
+            // Let's get total users that are relevant for this challenge.
+            let userCountQuery = supabase.from("users").select("*", { count: 'exact', head: true })
+            if (challengeType === 'squat') {
+                userCountQuery = userCountQuery.eq("allowed_legacy_squat", true)
+            }
+            const { count: userCount } = await userCountQuery
 
             // Get today's checkins
             const { count: checkinCount } = await supabase
                 .from("checkins")
                 .select("*", { count: 'exact', head: true })
                 .eq("date", today)
+                .eq("challenge_type", challengeType)
 
             if (userCount && userCount > 0) {
                 setPercentage(Math.round(((checkinCount || 0) / userCount) * 100))

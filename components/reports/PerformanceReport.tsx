@@ -96,7 +96,7 @@ export function PerformanceReport({ stats }: { stats: ReportStats }) {
                         <p className="text-[10px] text-brand-gray uppercase tracking-widest font-bold mb-1">Status</p>
                         <p className="text-xl font-black text-white italic">ELITE ATHLETE</p>
                     </div>
-                    <p className="text-xs text-brand-gray/40 font-medium">ENTROPIK.CO / CHALLENGES</p>
+                    <p className="text-xs text-brand-gray/40 font-medium">CHALLENGES.ENTROPIK.CO</p>
                 </div>
             </div>
 

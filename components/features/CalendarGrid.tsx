@@ -11,7 +11,7 @@ type Checkin = {
     date: string
 }
 
-export function CalendarGrid() {
+export function CalendarGrid({ challengeType = 'squat' }: { challengeType?: 'squat' | 'plank' }) {
     const { user: currentUser } = useUser()
     const [users, setUsers] = useState<User[]>([])
     const [checkins, setCheckins] = useState<Checkin[]>([])
@@ -53,9 +53,13 @@ export function CalendarGrid() {
                 return
             }
 
-            const { data: usersData } = await supabase.from("users").select("*").order("username")
-            const { data: checkinsData } = await supabase.from("checkins").select("user_id, date")
-            const { data: settings } = await supabase.from("challenge_settings").select("*").eq("key", "start_date").single()
+            let uQuery = supabase.from("users").select("*").order("username")
+            if (challengeType === 'squat') {
+                uQuery = uQuery.eq("allowed_legacy_squat", true)
+            }
+            const { data: usersData } = await uQuery
+            const { data: checkinsData } = await supabase.from("checkins").select("user_id, date").eq("challenge_type", challengeType)
+            const { data: settings } = await supabase.from("challenge_settings").select("*").eq("key", "start_date").maybeSingle()
 
             if (usersData) setUsers(usersData)
             if (checkinsData) setCheckins(checkinsData)
@@ -94,10 +98,10 @@ export function CalendarGrid() {
 
         if (isChecked) {
             // Delete
-            await supabase.from("checkins").delete().match({ user_id: currentUser.id, date })
+            await supabase.from("checkins").delete().match({ user_id: currentUser.id, date, challenge_type: challengeType })
         } else {
             // Insert
-            await supabase.from("checkins").insert({ user_id: currentUser.id, date })
+            await supabase.from("checkins").insert({ user_id: currentUser.id, date, challenge_type: challengeType })
         }
     }
 

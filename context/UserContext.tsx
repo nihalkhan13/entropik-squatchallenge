@@ -3,14 +3,15 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase, isMock } from "@/lib/supabase"
-import { storage } from "@/lib/storage"
 
-// Let's define the User type
 export type User = {
     id: string
+    auth_id: string
+    email: string | null
     username: string
     created_at: string
     is_admin: boolean
+    allowed_legacy_squat: boolean
     notification_settings?: {
         reminders?: boolean
         social?: boolean
@@ -21,7 +22,7 @@ export type User = {
 interface UserContextType {
     user: User | null
     isLoading: boolean
-    login: (username: string) => Promise<void>
+    loginWithGoogle: () => Promise<void>
     updateUser: (updates: Partial<User>) => Promise<void>
     logout: () => void
 }
@@ -34,143 +35,96 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter()
 
     useEffect(() => {
-        // Check local storage on mount
-        const storedUsername = localStorage.getItem("entropik_user")
-        if (storedUsername) {
-            fetchUser(storedUsername)
-        } else {
+        if (isMock) {
+            // Mock mode doesn't support Google Auth easily, we just stop loading.
             setIsLoading(false)
+            return
         }
+
+        const fetchPublicUser = async (authId: string) => {
+            try {
+                // Poll briefly if trigger hasn't finished yet
+                let data = null;
+                for (let i = 0; i < 8; i++) {
+                    const res = await supabase
+                        .from("users")
+                        .select("*")
+                        .eq("auth_id", authId)
+                        .maybeSingle()
+
+                    if (res.data) {
+                        data = res.data
+                        break
+                    }
+                    await new Promise(r => setTimeout(r, 500))
+                }
+
+                if (data) {
+                    console.log("[UserContext] Found public user row:", data);
+                    setUser(data)
+                } else {
+                    console.warn("[UserContext] Could not find public user for authId:", authId);
+                    await supabase.auth.signOut();
+                    setUser(null)
+                }
+            } catch (err) {
+                console.error("Error fetching public user:", err)
+                setUser(null)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        // Check active session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session?.user) {
+                fetchPublicUser(session.user.id)
+            } else {
+                setUser(null)
+                setIsLoading(false)
+            }
+        })
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            async (event, session) => {
+                if (session?.user) {
+                    setIsLoading(true)
+                    await fetchPublicUser(session.user.id)
+                } else {
+                    setUser(null)
+                    setIsLoading(false)
+                }
+            }
+        )
+
+        return () => subscription.unsubscribe()
     }, [])
 
-    const fetchUser = async (username: string) => {
-        const cleanName = username.trim()
-
-        if (isMock) {
-            // Mock Fetch via LocalStorage
-            const users = storage.getUsers()
-            const mockUser = users.find(u => u.username.toLowerCase() === cleanName.toLowerCase())
-
-            if (mockUser) {
-                setUser(mockUser)
-                localStorage.setItem("entropik_user", mockUser.username)
-            } else {
-                // In persist mode, if user not found, they must sign up (login fn handles creation).
-                // But here (re-hydrate), if not found, we logout.
-                localStorage.removeItem("entropik_user")
-            }
-            setIsLoading(false)
-            return
-        }
-
+    const loginWithGoogle = async () => {
         try {
-            const { data, error } = await supabase
-                .from("users")
-                .select("*")
-                .eq("username", cleanName)
-                .single()
-
-            if (data) {
-                setUser(data)
-                localStorage.setItem("entropik_user", cleanName)
-            } else if (error && error.code !== "PGRST116") {
-                console.error("Error fetching user:", error)
-            } else {
-                localStorage.removeItem("entropik_user")
-            }
-        } catch (err) {
-            console.error("Auth error", err)
-        } finally {
-            setIsLoading(false)
-        }
-    }
-
-    const login = async (username: string) => {
-        setIsLoading(true)
-        const cleanName = username.trim()
-
-        if (isMock) {
-            // Mock Login via LocalStorage
-            await new Promise(r => setTimeout(r, 600)) // Fake delay
-            const users = storage.getUsers()
-            let mockUser = users.find(u => u.username.toLowerCase() === cleanName.toLowerCase())
-
-            if (mockUser) {
-                setUser(mockUser)
-                localStorage.setItem("entropik_user", mockUser.username)
-            } else {
-                // Create new offline user
-                const newUser = {
-                    id: `local-u-${Date.now()}`,
-                    username: cleanName,
-                    created_at: new Date().toISOString(),
-                    is_admin: false
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: `${window.location.origin}/`,
                 }
-                storage.saveUser(newUser)
-                setUser(newUser)
-                localStorage.setItem("entropik_user", cleanName)
-            }
-            setIsLoading(false)
-            router.push("/dashboard")
-            return
-        }
-
-        // Check if user exists
-        let { data: existingUser, error } = await supabase
-            .from("users")
-            .select("*")
-            .eq("username", cleanName)
-            .single()
-
-        if (error && error.code !== "PGRST116") {
-            console.error("Login lookup error", error)
-            setIsLoading(false)
+            })
+            if (error) throw error
+        } catch (error) {
+            console.error('Error logging in with Google', error)
             throw error
         }
-
-        if (existingUser) {
-            setUser(existingUser)
-            localStorage.setItem("entropik_user", cleanName)
-        } else {
-            // Create new user
-            const { data: newUser, error: createError } = await supabase
-                .from("users")
-                .insert([{ username: cleanName }])
-                .select()
-                .single()
-
-            if (createError) {
-                console.error("Create user error", createError)
-                setIsLoading(false)
-                throw createError
-            }
-
-            if (newUser) {
-                setUser(newUser)
-                localStorage.setItem("entropik_user", cleanName)
-            }
-        }
-
-        setIsLoading(false)
-        router.push("/dashboard")
     }
 
     const updateUser = async (updates: Partial<User>) => {
         if (!user) return
-
-        if (isMock) {
-            const newUser = { ...user, ...updates }
-            storage.saveUser(newUser as any)
-            setUser(newUser)
-            return
-        }
 
         const { data, error } = await supabase
             .from("users")
             .update(updates)
             .eq("id", user.id)
             .select()
-            .single()
+            .maybeSingle()
 
         if (error) {
             console.error("Update user error", error)
@@ -182,14 +136,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
-    const logout = () => {
+    const logout = async () => {
+        await supabase.auth.signOut()
         setUser(null)
-        localStorage.removeItem("entropik_user")
         router.push("/login")
     }
 
     return (
-        <UserContext.Provider value={{ user, isLoading, login, updateUser, logout }}>
+        <UserContext.Provider value={{ user, isLoading, loginWithGoogle, updateUser, logout }}>
             {children}
         </UserContext.Provider>
     )

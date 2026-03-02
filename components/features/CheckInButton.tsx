@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 import { storage } from "@/lib/storage"
 import { getTodayPST } from "@/lib/date"
 
-export function CheckInButton() {
+export function CheckInButton({ challengeType = 'squat' }: { challengeType?: 'squat' | 'plank' }) {
     const { user } = useUser()
     const [hasCheckedIn, setHasCheckedIn] = useState(false)
     const [loading, setLoading] = useState(true)
@@ -37,7 +37,8 @@ export function CheckInButton() {
             .select("*")
             .eq("user_id", user.id)
             .eq("date", today)
-            .single()
+            .eq("challenge_type", challengeType)
+            .maybeSingle()
 
         if (data) {
             setHasCheckedIn(true)
@@ -65,7 +66,7 @@ export function CheckInButton() {
         const { error } = await supabase
             .from("checkins")
             .insert([
-                { user_id: user.id, date: today }
+                { user_id: user.id, date: today, challenge_type: challengeType }
             ])
 
         if (error) {
@@ -101,6 +102,7 @@ export function CheckInButton() {
             .delete()
             .eq("user_id", user!.id)
             .eq("date", today)
+            .eq("challenge_type", challengeType)
 
         if (error) {
             console.error("Undo failed", error)
@@ -145,7 +147,7 @@ export function CheckInButton() {
                 ) : (
                     <div className="flex flex-col items-center">
                         <span className="text-brand-dark font-extrabold text-xl tracking-tighter">
-                            I DID MY 100 SQUATS
+                            {challengeType === 'squat' ? 'I DID MY 100 SQUATS' : 'I DID MY 2 MINUTE PLANK'}
                         </span>
                         <span className="text-brand-dark/60 text-xs font-semibold tracking-widest uppercase mt-1">
                             TAP TO CONFIRM

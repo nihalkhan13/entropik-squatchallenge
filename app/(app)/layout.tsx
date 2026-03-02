@@ -36,9 +36,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 {/* Header */}
                 <header className="flex items-center justify-between py-4 mb-6">
                     <div className="flex items-center">
-                        <img src="/logo.png" alt="ENTROPIK" className="h-24 w-auto -ml-5" />
+                        <button onClick={() => router.push("/")} className="hover:opacity-80 transition-opacity">
+                            <img src="/logo.png" alt="ENTROPIK" className="h-24 w-auto -ml-5" />
+                        </button>
                     </div>
                     <div className="flex items-center gap-3">
+                        {user.is_admin && (
+                            <button
+                                onClick={() => router.push("/admin")}
+                                className="text-[10px] text-brand-gray hover:text-white uppercase tracking-widest border border-brand-glass-border px-2 py-1 rounded"
+                            >
+                                Admin
+                            </button>
+                        )}
                         <div className="text-right">
                             <p className="text-[10px] text-brand-gray uppercase tracking-widest">Operator</p>
                             <p className="text-sm font-medium text-brand-teal">{user.username}</p>

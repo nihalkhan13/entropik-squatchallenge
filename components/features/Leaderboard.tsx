@@ -11,7 +11,7 @@ type LeaderboardEntry = {
     total: number
 }
 
-export function Leaderboard() {
+export function Leaderboard({ challengeType = 'squat' }: { challengeType?: 'squat' | 'plank' }) {
     const [entries, setEntries] = useState<LeaderboardEntry[]>([])
 
     useEffect(() => {
@@ -23,8 +23,12 @@ export function Leaderboard() {
                 users = storage.getUsers()
                 checkins = storage.getCheckins()
             } else {
-                const { data: u } = await supabase.from("users").select("id, username")
-                const { data: c } = await supabase.from("checkins").select("user_id, date")
+                let uQuery = supabase.from("users").select("id, username")
+                if (challengeType === 'squat') {
+                    uQuery = uQuery.eq("allowed_legacy_squat", true)
+                }
+                const { data: u } = await uQuery
+                const { data: c } = await supabase.from("checkins").select("user_id, date").eq("challenge_type", challengeType)
                 users = u
                 checkins = c
             }

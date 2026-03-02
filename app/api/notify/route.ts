@@ -42,7 +42,7 @@ export async function POST(request: Request) {
                     await sendPushNotification({
                         userIds: tokenList,
                         title: "Squad Pulse ⚡",
-                        message: `${percentage}% of your squad finished their squats. Don't be the outlier.`
+                        message: `${percentage}% of your squad finished their plank. Don't be the outlier.`
                     })
                 }
             }

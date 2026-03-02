@@ -4,22 +4,17 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { useUser } from "@/context/UserContext"
 import { Button } from "@/components/ui/Button"
-import { Input } from "@/components/ui/Input"
 import { Card } from "@/components/ui/Card"
 
 export default function LoginPage() {
-    const [name, setName] = useState("")
-    const { login, isLoading } = useUser()
+    const { loginWithGoogle, isLoading } = useUser()
     const [error, setError] = useState("")
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        if (!name.trim()) return
-
+    const handleGoogleLogin = async () => {
         try {
-            await login(name)
+            await loginWithGoogle()
         } catch (err) {
-            setError("Something went wrong. Please try again.")
+            setError("Something went wrong with Google Login. Please try again.")
         }
     }
 
@@ -39,54 +34,33 @@ export default function LoginPage() {
                 <div className="text-center mb-10 flex flex-col items-center">
                     <img src="/logo.png" alt="ENTROPIK" className="h-32 w-auto mb-4" />
                     <p className="text-brand-gray text-lg tracking-wide uppercase text-xs font-semibold">
-                        100 Squats / 30 Days
+                        SQUAD CHALLENGES
                     </p>
                 </div>
 
                 <Card className="border-brand-glass-border/50">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-2">
-                            <label htmlFor="name" className="text-sm font-medium text-brand-gray ml-1">
-                                OPERATOR NAME
-                            </label>
-                            <Input
-                                id="name"
-                                placeholder="Enter your name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                autoComplete="off"
-                                className="text-lg bg-black/20 focus:bg-brand-glass"
-                                autoFocus
-                            />
+                    <div className="space-y-6">
+                        <div className="space-y-2 text-center">
+                            <h2 className="text-xl font-bold text-white tracking-wider">SECURE ACCESS</h2>
+                            <p className="text-sm text-brand-gray">Log in to track your progress.</p>
                         </div>
 
                         {error && (
-                            <p className="text-sm text-brand-error px-1">
+                            <p className="text-sm text-brand-error px-1 text-center">
                                 {error}
                             </p>
                         )}
 
                         <Button
-                            type="submit"
-                            className="w-full text-lg h-14"
-                            variant="primary"
-                            disabled={!name.trim() || isLoading}
+                            onClick={handleGoogleLogin}
+                            className="w-full text-lg h-14 bg-white text-black hover:bg-gray-200"
+                            disabled={isLoading}
                             isLoading={isLoading}
                         >
-                            {isLoading ? "AUTHENTICATING..." : "ENTER CHALLENGE"}
+                            {isLoading ? "AUTHENTICATING..." : "SIGN IN WITH GOOGLE"}
                         </Button>
-
-                        <div className="pt-2 text-center">
-                            <p className="text-xs text-brand-gray/60 leading-relaxed italic">
-                                For the best experience, tap <span className="text-brand-teal font-semibold">Share</span> then <span className="text-brand-teal font-semibold">"Add to Home Screen"</span>
-                            </p>
-                        </div>
-                    </form>
+                    </div>
                 </Card>
-
-                <p className="mt-8 text-center text-brand-gray/50 text-xs">
-                    NO PASSWORDS REQUIRED • STAY HARD
-                </p>
             </motion.div>
         </div>
     )

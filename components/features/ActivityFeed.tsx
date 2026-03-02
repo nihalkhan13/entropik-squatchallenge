@@ -8,7 +8,7 @@ import { useUser } from "@/context/UserContext"
 import { ActivityItem } from "./ActivityItem"
 import { Flame } from "lucide-react"
 
-export function ActivityFeed() {
+export function ActivityFeed({ challengeType = 'squat' }: { challengeType?: 'squat' | 'plank' }) {
     const { user } = useUser()
     const [activities, setActivities] = useState<Activity[]>([])
     const [loading, setLoading] = useState(true)
@@ -32,7 +32,8 @@ export function ActivityFeed() {
                     .from('activities')
                     .select('*, user:users(*)')
                     .eq('id', payload.new.id)
-                    .single()
+                    .eq('challenge_type', challengeType)
+                    .maybeSingle()
 
                 if (data) {
                     setActivities(prev => [data as Activity, ...prev].slice(0, 50))
@@ -54,6 +55,7 @@ export function ActivityFeed() {
         const { data, error } = await supabase
             .from('activities')
             .select('*, user:users(*)')
+            .eq('challenge_type', challengeType)
             .order('created_at', { ascending: false })
             .limit(20)
 

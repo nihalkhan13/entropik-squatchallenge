@@ -13,20 +13,34 @@ import { Settings, BarChart3, ChevronDown, ChevronUp } from "lucide-react"
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import Link from "next/link"
-import { getCurrentDay, CHALLENGE_START_DATE } from "@/lib/date"
+import { getCurrentDay, CHALLENGE_START_DATE, getTodayPST } from "@/lib/date"
+import { CountdownTimer } from "@/components/features/CountdownTimer"
+import { ChallengeInstructions } from "@/components/features/ChallengeInstructions"
+import { PreLaunchActions } from "@/components/features/PreLaunchActions"
 
 export default function DashboardPage() {
     const { user } = useUser()
     const [stats, setStats] = useState<any>(null)
     const [showReport, setShowReport] = useState(false)
+    const [challengeStartDate, setChallengeStartDate] = useState<string | null>(null)
+    const [isPreLaunch, setIsPreLaunch] = useState<boolean>(false)
 
     const currentDay = getCurrentDay()
 
     useEffect(() => {
         if (user) {
+            fetchSettings()
             fetchStats()
         }
     }, [user])
+
+    const fetchSettings = async () => {
+        const { data: settings } = await supabase.from("challenge_settings").select("*").eq("key", "start_date").maybeSingle()
+        if (settings) {
+            setChallengeStartDate(settings.value)
+            setIsPreLaunch(getTodayPST() < settings.value)
+        }
+    }
 
     const fetchStats = async () => {
         if (!user) return
@@ -34,7 +48,7 @@ export default function DashboardPage() {
             .from('checkins')
             .select('date')
             .eq('user_id', user.id)
-            .eq('challenge_type', 'squat')
+            .eq('challenge_type', 'plank')
 
         if (checkins) {
             const calculated = calculatePerformanceStats(
@@ -47,6 +61,28 @@ export default function DashboardPage() {
         }
     }
 
+    if (isPreLaunch && challengeStartDate) {
+        return (
+            <div className="space-y-8 relative min-h-[60vh] flex flex-col justify-center">
+                <div className="text-center space-y-2 mb-8">
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-brand-gray bg-clip-text text-transparent uppercase tracking-wider">
+                        Mission Pending
+                    </h1>
+                    <p className="text-brand-gray font-medium tracking-wide">
+                        Starts: March 13th 2026
+                    </p>
+                    <p className="text-brand-gray/60 text-sm">
+                        The challenge has not started yet. Hold the line.
+                    </p>
+                </div>
+
+                <ChallengeInstructions />
+                <PreLaunchActions />
+                <CountdownTimer targetDate={challengeStartDate} />
+            </div>
+        )
+    }
+
     return (
         <div className="space-y-8 relative">
             {/* Intro / Welcome */}
@@ -56,7 +92,7 @@ export default function DashboardPage() {
                         Day {currentDay}
                     </h1>
                     <p className="text-brand-gray text-sm font-medium">
-                        30 Days of Discipline. Stay Hard.
+                        30 Day 2-Minute Plank Challenge.
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -71,6 +107,9 @@ export default function DashboardPage() {
                     </Link>
                 </div>
             </div>
+
+            {/* Mission Instructions */}
+            <ChallengeInstructions />
 
             {/* Performance Report Overlay/Section */}
             <AnimatePresence>
@@ -87,33 +126,33 @@ export default function DashboardPage() {
             </AnimatePresence>
 
             {/* Group Stats */}
-            <GroupProgress challengeType="squat" />
+            <GroupProgress challengeType="plank" />
 
             {/* Main Action */}
             <div>
-                <CheckInButton challengeType="squat" />
+                <CheckInButton challengeType="plank" />
             </div>
 
             {/* Activity Feed */}
-            <ActivityFeed challengeType="squat" />
+            <ActivityFeed challengeType="plank" />
 
             {/* Calendar */}
             <section className="bg-brand-glass rounded-2xl p-4 border border-brand-glass-border">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-white font-bold text-lg">
-                        Squad Grid
+                        Plank Grid
                     </h2>
                     <div className="flex gap-2 text-[10px] text-brand-gray bg-black/20 px-2 py-1 rounded-full">
                         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-brand-teal" /> DONE</span>
                         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-brand-error" /> MISSED</span>
                     </div>
                 </div>
-                <CalendarGrid challengeType="squat" />
+                <CalendarGrid challengeType="plank" />
             </section>
 
             {/* Local Leaderboard */}
             <section>
-                <Leaderboard challengeType="squat" />
+                <Leaderboard challengeType="plank" />
             </section>
 
             {/* Footer Quote */}
