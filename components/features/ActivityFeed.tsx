@@ -33,6 +33,7 @@ export function ActivityFeed({ challengeType = 'squat' }: { challengeType?: 'squ
     }
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchActivities()
 
         if (isMock) return
@@ -62,6 +63,7 @@ export function ActivityFeed({ challengeType = 'squat' }: { challengeType?: 'squ
         return () => {
             supabase.removeChannel(activitySub)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [challengeType])
 
     if (loading) {

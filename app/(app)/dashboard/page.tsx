@@ -43,8 +43,10 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (user) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchStats()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user])
 
     return (

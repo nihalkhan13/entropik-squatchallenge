@@ -11,7 +11,7 @@ import { DEMO_SETTINGS, DEMO_USERS } from "@/lib/demo-data"
 
 export default function AdminPage() {
     const { user, isLoading } = useUser()
-    const [users, setUsers] = useState<any[]>([])
+    const [users, setUsers] = useState<{ id: string, email?: string, username?: string, created_at?: string, is_admin?: boolean }[]>([])
     const [startDate, setStartDate] = useState("")
 
     useEffect(() => {

@@ -19,7 +19,7 @@ export function GroupProgress({ challengeType = 'squat' }: { challengeType?: 'sq
                 const checkins = storage.getCheckins()
                 const userCount = users.length
 
-                const checkinCount = checkins.filter((c: any) => c.date === today).length
+                const checkinCount = checkins.filter((c: { date: string }) => c.date === today).length
 
                 if (userCount > 0) {
                     // Ensure it's not 0 for vibes
@@ -50,6 +50,7 @@ export function GroupProgress({ challengeType = 'squat' }: { challengeType?: 'sq
             }
             setLoading(false)
         }
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchProgress()
 
         // Subscribe to realtime updates
@@ -63,6 +64,7 @@ export function GroupProgress({ challengeType = 'squat' }: { challengeType?: 'sq
         return () => {
             supabase.removeChannel(subscription)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const radius = 30

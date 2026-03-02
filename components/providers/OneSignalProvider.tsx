@@ -7,13 +7,13 @@ import { supabase } from '@/lib/supabase'
 declare global {
     interface Window {
         OneSignal?: {
-            push: Function
-            showNativePrompt: Function
-            isPushNotificationsEnabled: Function
-            init: Function
-            getUserId: Function
+            push: (...args: unknown[]) => unknown
+            showNativePrompt: () => Promise<void>
+            isPushNotificationsEnabled: () => Promise<boolean>
+            init: (config: unknown) => void
+            getUserId: () => Promise<string | null | undefined>
         } & unknown[]
-        html2canvas?: Function
+        html2canvas?: (...args: unknown[]) => Promise<HTMLCanvasElement>
     }
 }
 

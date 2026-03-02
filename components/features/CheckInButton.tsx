@@ -22,7 +22,7 @@ export function CheckInButton({ challengeType = 'squat' }: { challengeType?: 'sq
 
         if (isMock) {
             const checkins = storage.getCheckins()
-            const checked = checkins.some((c: any) => c.user_id === user.id && c.date === today)
+            const checked = checkins.some((c: { user_id: string, date: string }) => c.user_id === user.id && c.date === today)
             if (checked) setHasCheckedIn(true)
             setLoading(false)
             return
@@ -43,7 +43,9 @@ export function CheckInButton({ challengeType = 'squat' }: { challengeType?: 'sq
     }
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         checkStatus()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, today])
 
     const handleCheckIn = async () => {

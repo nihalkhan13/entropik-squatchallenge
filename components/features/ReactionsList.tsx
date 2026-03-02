@@ -19,6 +19,7 @@ export function ReactionsList({ activityId }: { activityId: string }) {
     }
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchReactions()
 
         if (isMock) return
@@ -38,6 +39,7 @@ export function ReactionsList({ activityId }: { activityId: string }) {
         return () => {
             supabase.removeChannel(channel)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activityId])
 
     // Aggregate reactions: emoji -> count

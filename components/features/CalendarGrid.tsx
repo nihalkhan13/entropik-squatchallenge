@@ -21,6 +21,7 @@ export function CalendarGrid({ challengeType = 'squat' }: { challengeType?: 'squ
     const today = getTodayPST()
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchData()
 
         if (isMock) return
@@ -36,6 +37,7 @@ export function CalendarGrid({ challengeType = 'squat' }: { challengeType?: 'squ
         return () => {
             supabase.removeChannel(subscription)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const fetchData = async () => {

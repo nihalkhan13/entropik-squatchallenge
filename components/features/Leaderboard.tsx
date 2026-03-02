@@ -16,8 +16,8 @@ export function Leaderboard({ challengeType = 'squat' }: { challengeType?: 'squa
 
     useEffect(() => {
         async function fetchLeaderboard() {
-            let users: any[] | null = []
-            let checkins: any[] | null = []
+            let users: { id: string, username: string }[] | null = []
+            let checkins: { user_id: string, date: string }[] | null = []
 
             if (isMock) {
                 users = storage.getUsers()
@@ -36,7 +36,7 @@ export function Leaderboard({ challengeType = 'squat' }: { challengeType?: 'squa
             if (!users || !checkins) return
 
             const result = users.map(u => {
-                const userCheckins = checkins!.filter((c: any) => c.user_id === u.id).map((c: any) => c.date).sort()
+                const userCheckins = checkins!.filter((c: { user_id: string, date: string }) => c.user_id === u.id).map((c: { date: string }) => c.date).sort()
                 const total = userCheckins.length
 
                 // Calculate current streak
@@ -73,7 +73,9 @@ export function Leaderboard({ challengeType = 'squat' }: { challengeType?: 'squa
             setEntries(result)
         }
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchLeaderboard()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (

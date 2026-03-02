@@ -1,0 +1,365 @@
+
+> entropik-squats@0.1.0 lint
+> eslint
+
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(app)/admin/page.tsx
+   14:11  warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   15:40  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+   36:21  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+   94:21  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+  104:39  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(app)/dashboard/page.tsx
+  12:31  warning  'ChevronDown' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  12:44  warning  'ChevronUp' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-unused-vars
+  20:40  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-explicit-any
+  27:13  error    Error: Cannot access variable before it is declared
+
+`fetchStats` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(app)/dashboard/page.tsx:27:13
+  25 |     useEffect(() => {
+  26 |         if (user) {
+> 27 |             fetchStats()
+     |             ^^^^^^^^^^ `fetchStats` accessed before it is declared
+  28 |         }
+  29 |     }, [user])
+  30 |
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(app)/dashboard/page.tsx:31:5
+  29 |     }, [user])
+  30 |
+> 31 |     const fetchStats = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 32 |         if (!user) return
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 33 |         const { data: checkins } = await supabase
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |         }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 48 |     }
+     | ^^^^^^ `fetchStats` is declared here
+  49 |
+  50 |     return (
+  51 |         <div className="space-y-8 relative">  react-hooks/immutability
+  29:8   warning  React Hook useEffect has a missing dependency: 'fetchStats'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   react-hooks/exhaustive-deps
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(app)/layout.tsx
+  40:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(app)/plank/page.tsx
+  12:31  warning  'ChevronDown' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  12:44  warning  'ChevronUp' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-unused-vars
+  23:40  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  32:13  error    Error: Cannot access variable before it is declared
+
+`fetchSettings` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(app)/plank/page.tsx:32:13
+  30 |     useEffect(() => {
+  31 |         if (user) {
+> 32 |             fetchSettings()
+     |             ^^^^^^^^^^^^^ `fetchSettings` accessed before it is declared
+  33 |             fetchStats()
+  34 |         }
+  35 |     }, [user])
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(app)/plank/page.tsx:37:5
+  35 |     }, [user])
+  36 |
+> 37 |     const fetchSettings = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 38 |         const { data: settings } = await supabase.from("challenge_settings").select("*").eq("key", "start_date").maybeSingle()
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 39 |         if (settings) {
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 40 |             setChallengeStartDate(settings.value)
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 41 |             setIsPreLaunch(getTodayPST() < settings.value)
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 42 |         }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 43 |     }
+     | ^^^^^^ `fetchSettings` is declared here
+  44 |
+  45 |     const fetchStats = async () => {
+  46 |         if (!user) return  react-hooks/immutability
+  33:13  error    Error: Cannot access variable before it is declared
+
+`fetchStats` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(app)/plank/page.tsx:33:13
+  31 |         if (user) {
+  32 |             fetchSettings()
+> 33 |             fetchStats()
+     |             ^^^^^^^^^^ `fetchStats` accessed before it is declared
+  34 |         }
+  35 |     }, [user])
+  36 |
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(app)/plank/page.tsx:45:5
+  43 |     }
+  44 |
+> 45 |     const fetchStats = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         if (!user) return
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |         const { data: checkins } = await supabase
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 61 |         }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 62 |     }
+     | ^^^^^^ `fetchStats` is declared here
+  63 |
+  64 |     if (isPreLaunch && challengeStartDate) {
+  65 |         return (                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              react-hooks/immutability
+  35:8   warning  React Hook useEffect has a missing dependency: 'fetchStats'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/exhaustive-deps
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(app)/settings/page.tsx
+   4:10  warning  'motion' is defined but never used        @typescript-eslint/no-unused-vars
+   5:24  warning  'Smartphone' is defined but never used    @typescript-eslint/no-unused-vars
+   9:10  warning  'supabase' is defined but never used      @typescript-eslint/no-unused-vars
+  15:20  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:22  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/(auth)/login/page.tsx
+  16:18  warning  'err' is defined but never used                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  35:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/api/admin/route.ts
+  55:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/api/notify/route.ts
+  7:23  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/app/page.tsx
+   7:10  warning  'motion' is defined but never used           @typescript-eslint/no-unused-vars
+   8:10  warning  'Card' is defined but never used             @typescript-eslint/no-unused-vars
+  11:28  warning  'logout' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/ActivityFeed.tsx
+  12:13  warning  'user' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+  18:9   error    Error: Cannot access variable before it is declared
+
+`fetchActivities` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/ActivityFeed.tsx:18:9
+  16 |
+  17 |     useEffect(() => {
+> 18 |         fetchActivities()
+     |         ^^^^^^^^^^^^^^^ `fetchActivities` accessed before it is declared
+  19 |
+  20 |         if (isMock) return
+  21 |
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/ActivityFeed.tsx:49:5
+  47 |     }, [])
+  48 |
+> 49 |     const fetchActivities = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |         if (isMock) {
+     | ^^^^^^^^^^^^^^^^^^^^^
+> 51 |             setLoading(false)
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^
+> 65 |         setLoading(false)
+     | ^^^^^^^^^^^^^^^^^^^^^
+> 66 |     }
+     | ^^^^^^ `fetchActivities` is declared here
+  67 |
+  68 |     if (loading) {
+  69 |         return (  react-hooks/immutability
+  47:8   warning  React Hook useEffect has missing dependencies: 'challengeType' and 'fetchActivities'. Either include them or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react-hooks/exhaustive-deps
+  55:23  warning  'error' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-unused-vars
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/ActivityItem.tsx
+  11:11  warning  'ActivityItemProps' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/CalendarGrid.tsx
+  39:8   warning  React Hook useEffect has a missing dependency: 'fetchData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  46:52  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  49:56  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/CheckInButton.tsx
+   21:9   error    Error: Cannot access variable before it is declared
+
+`checkStatus` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/CheckInButton.tsx:21:9
+  19 |
+  20 |     useEffect(() => {
+> 21 |         checkStatus()
+     |         ^^^^^^^^^^^ `checkStatus` accessed before it is declared
+  22 |     }, [user, today])
+  23 |
+  24 |     const checkStatus = async () => {
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/CheckInButton.tsx:24:5
+  22 |     }, [user, today])
+  23 |
+> 24 |     const checkStatus = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 25 |         if (!user) return
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 26 |
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |         setLoading(false)
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |     }
+     | ^^^^^^ `checkStatus` is declared here
+  48 |
+  49 |     const handleCheckIn = async () => {
+  50 |         if (!user || hasCheckedIn || loading) return  react-hooks/immutability
+   22:8   warning  React Hook useEffect has a missing dependency: 'checkStatus'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         react-hooks/exhaustive-deps
+   29:47  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  194:32  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/CheckInButton.tsx:194:32
+  192 |                     animate={{
+  193 |                         opacity: 0,
+> 194 |                         scale: Math.random() * 1 + 0.5,
+      |                                ^^^^^^^^^^^^^ Cannot call impure function
+  195 |                         x: (Math.random() - 0.5) * 300,
+  196 |                         y: (Math.random() - 0.5) * 300,
+  197 |                         rotate: Math.random() * 360                                                                                                                                                                                                                                                          react-hooks/purity
+  195:29  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/CheckInButton.tsx:195:29
+  193 |                         opacity: 0,
+  194 |                         scale: Math.random() * 1 + 0.5,
+> 195 |                         x: (Math.random() - 0.5) * 300,
+      |                             ^^^^^^^^^^^^^ Cannot call impure function
+  196 |                         y: (Math.random() - 0.5) * 300,
+  197 |                         rotate: Math.random() * 360
+  198 |                     }}                                                                                                                                                                                                                                                                     react-hooks/purity
+  196:29  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/CheckInButton.tsx:196:29
+  194 |                         scale: Math.random() * 1 + 0.5,
+  195 |                         x: (Math.random() - 0.5) * 300,
+> 196 |                         y: (Math.random() - 0.5) * 300,
+      |                             ^^^^^^^^^^^^^ Cannot call impure function
+  197 |                         rotate: Math.random() * 360
+  198 |                     }}
+  199 |                     transition={{ duration: 0.8, ease: "easeOut" }}                                                                                                                                                                                                                                     react-hooks/purity
+  197:33  error    Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/CheckInButton.tsx:197:33
+  195 |                         x: (Math.random() - 0.5) * 300,
+  196 |                         y: (Math.random() - 0.5) * 300,
+> 197 |                         rotate: Math.random() * 360
+      |                                 ^^^^^^^^^^^^^ Cannot call impure function
+  198 |                     }}
+  199 |                     transition={{ duration: 0.8, ease: "easeOut" }}
+  200 |                     className="absolute w-2 h-2 bg-brand-teal rounded-sm shadow-[0_0_10px_#5dffdd]"                                                                                                                                                                                     react-hooks/purity
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/GroupProgress.tsx
+  22:58  error    Unexpected any. Specify a different type                                                                                        @typescript-eslint/no-explicit-any
+  66:8   warning  React Hook useEffect has missing dependencies: 'challengeType' and 'today'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/Leaderboard.tsx
+  19:24  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  20:27  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  39:59  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  39:95  error    Unexpected any. Specify a different type                                                                          @typescript-eslint/no-explicit-any
+  77:8   warning  React Hook useEffect has a missing dependency: 'challengeType'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/PreLaunchActions.tsx
+   8:20   error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+  18:110  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
+  22:13   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/PreLaunchActions.tsx:22:13
+  20 |
+  21 |         if (isStandalone || promptDismissed) {
+> 22 |             setShowHomescreenPrompt(false)
+     |             ^^^^^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  23 |         }
+  24 |
+  25 |         // Check if OneSignal notifications are already granted  react-hooks/set-state-in-effect
+  84:140  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               react/no-unescaped-entities
+  84:159  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               react/no-unescaped-entities
+  86:129  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               react/no-unescaped-entities
+  86:148  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               react/no-unescaped-entities
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/ReactionsList.tsx
+  12:9  error    Error: Cannot access variable before it is declared
+
+`fetchReactions` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/ReactionsList.tsx:12:9
+  10 |
+  11 |     useEffect(() => {
+> 12 |         fetchReactions()
+     |         ^^^^^^^^^^^^^^ `fetchReactions` accessed before it is declared
+  13 |
+  14 |         if (isMock) return
+  15 |
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/features/ReactionsList.tsx:33:5
+  31 |     }, [activityId])
+  32 |
+> 33 |     const fetchReactions = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 34 |         if (isMock) return
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 35 |         const { data } = await supabase
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 36 |             .from('reactions')
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 37 |             .select('*')
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 38 |             .eq('activity_id', activityId)
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 39 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 40 |         if (data) setReactions(data as Reaction[])
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 41 |     }
+     | ^^^^^^ `fetchReactions` is declared here
+  42 |
+  43 |     // Aggregate reactions: emoji -> count
+  44 |     const counts = reactions.reduce((acc, r) => {  react-hooks/immutability
+  31:8  warning  React Hook useEffect has a missing dependency: 'fetchReactions'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              react-hooks/exhaustive-deps
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/providers/OneSignalProvider.tsx
+  9:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/reports/PerformanceReport.tsx
+   4:10  warning  'motion' is defined but never used                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   6:10  warning  'Card' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  78:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/components/ui/Input.tsx
+  4:18  error  An interface declaring no members is equivalent to its supertype  @typescript-eslint/no-empty-object-type
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/lib/stats.ts
+  3:10  warning  'Activity' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/nihalkhan/Documents/Antigravity/100 Day Squat Challenge/lib/storage.ts
+   62:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+   70:31  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   82:59  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   96:18  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+  103:44  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 71 problems (39 errors, 32 warnings)
+

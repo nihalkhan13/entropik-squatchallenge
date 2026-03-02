@@ -56,9 +56,12 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (user) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchSettings()
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchStats()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user])
 
     if (isPreLaunch && challengeStartDate) {

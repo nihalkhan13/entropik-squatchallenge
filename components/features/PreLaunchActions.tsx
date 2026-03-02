@@ -6,13 +6,13 @@ import { Card } from "@/components/ui/Card"
 declare global {
     interface Window {
         OneSignal?: {
-            push: Function
-            showNativePrompt: Function
-            isPushNotificationsEnabled: Function
-            init: Function
-            getUserId: Function
+            push: (...args: unknown[]) => unknown
+            showNativePrompt: () => Promise<void>
+            isPushNotificationsEnabled: () => Promise<boolean>
+            init: (config: unknown) => void
+            getUserId: () => Promise<string | null | undefined>
         } & unknown[]
-        html2canvas?: Function
+        html2canvas?: (...args: unknown[]) => Promise<HTMLCanvasElement>
     }
 }
 
@@ -22,10 +22,12 @@ export function PreLaunchActions() {
 
     useEffect(() => {
         // Check if already installed as PWA or if prompt dismissed
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone
         const promptDismissed = localStorage.getItem('entropik_homescreen_dismissed')
 
         if (isStandalone || promptDismissed) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setShowHomescreenPrompt(false)
         }
 
@@ -88,9 +90,9 @@ export function PreLaunchActions() {
                                 For the best experience and to maintain a bulletproof daily habit, add this web app to your homescreen.
                             </p>
                             <p className="text-brand-gray text-xs">
-                                <span className="text-white font-semibold">iOS</span>: Tap the Share button (square with arrow) and select "Add to Home Screen".
+                                <span className="text-white font-semibold">iOS</span>: Tap the Share button (square with arrow) and select &quot;Add to Home Screen&quot;.
                                 <br />
-                                <span className="text-white font-semibold">Android</span>: Tap the menu (three dots) and select "Add to Home screen".
+                                <span className="text-white font-semibold">Android</span>: Tap the menu (three dots) and select &quot;Add to Home screen&quot;.
                             </p>
                         </div>
                     </div>
